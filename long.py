@@ -56,3 +56,69 @@ def getNews():
             news.append(myarticles['title'] + "\n\n\nArticle by: " + myarticles['author'] + "\n\n\nDate Posted: " + str(dateutil.parser.parse(myarticles['publishedAt'])) + "\n\n\n" + myarticles['description'] + "\n\n\n" + myarticles['url'] + "\n\n\n" +  myarticles['urlToImage'])
 
         return news
+
+
+class reddit:
+    def __init__(self):
+        pass
+
+    def hotornew(self, redit):
+        redlist = []
+        
+        for index, submission in enumerate(redit, start=1):
+            redlist.append(str(index) + "). " + submission.title)
+
+            if(submission.selftext == ""):
+                pass
+            else:
+                redlist.append("- " + submission.selftext)
+                
+            redlist.append(submission.url)
+
+            if index == 5:
+                break
+        
+        return redlist
+
+
+class googledict:
+    def __init__(self):
+        pass
+    
+    def parsetext(self, response):
+        index = 0
+        mgawords = []
+        mgawords.append(response[0]['word'])
+        mgawords.append(response[0]['phonetics'][0]['text'])
+        while index <= 10:
+            try:
+                str1 = ", "
+                mgawords.append(response[0]['meanings'][index]['partOfSpeech'])
+                mgawords.append(response[0]['meanings'][index]['definitions'][0]['definition'])
+                try: 
+                    mgawords.append("-" + response[0]['meanings'][index]['definitions'][1]['definition'])
+                except:
+                    pass
+                
+                try:
+                    mgawords.append("-" + response[0]['meanings'][index]['definitions'][2]['definition'])
+                except:
+                    pass
+
+                try:
+                    mgawords.append("synonyms: \n\n" +  str1.join(response[0]['meanings'][0]['definitions'][index]['synonyms']))
+                except:
+                    mgawords.append("synonyms: Nope. source didn't return anything.")
+                try:
+                    mgawords.append("\nExample: \n\n" + "-" + (str.capitalize(response[0]['meanings'][index]['definitions'][0]['example'])))
+                except:
+                    mgawords.append("Example: N/A")
+
+                index += 1
+
+            except:
+                break
+
+        mgawords.append(response[0]['phonetics'][0]['audio'])
+
+        return mgawords
