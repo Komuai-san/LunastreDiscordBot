@@ -80,6 +80,48 @@ class reddit:
         
         return redlist
 
+class makeup:
+    def __init__(self):
+        pass
+
+    def makeapp(self, url):
+        mek = requests.get(url).json()
+        color = []
+        rando = 2
+
+        try:
+            while True:
+                try:
+                    rando = random.randint(0, 500)
+                    a = ["Brand: " + mek[rando]['brand'], "Name: " + mek[rando]['name'], "Price: $" + str(mek[rando]['price']), "Link: " + mek[rando]['product_link'], "Image: " + mek[rando]['image_link'], "Description: " + mek[rando]['description'], "Rating: " + str(mek[rando]['rating'])]
+                    break
+                except:
+                    continue
+
+            try:
+                while index <=10:
+                    try:
+                        color.append(mek[rando]['product_colors'][index]['colour_name'])
+                        index+=1
+                                
+                    except:
+                        break
+            except:
+                pass
+
+            if len(mek[rando]['tag_list']) == 0:
+                    tags = "No Tags."
+
+            else:
+                tags = "Tags: " + str(mek[rando]['tag_list'])[1:-1]
+
+                        
+            #reply = "You might like this one: \n\n" + listToString(a) + "\n\nColours: " + str(color)[1:-1] + "\n\n" + tags
+            return a, color, tags
+
+        except Exception as e:
+            return e
+
 
 class googledict:
     def __init__(self):

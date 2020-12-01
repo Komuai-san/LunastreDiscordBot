@@ -3,19 +3,24 @@ import discord
 from discord.ext import commands, tasks
 import random
 import requests
+
 import json
 import pafy
 import asyncio
 import basc_py4chan as chan
 import long
+from PIL import ImageEnhance
 from udpy import UrbanClient
 import wikipedia
 import dateutil.parser
 import config
+from PIL import Image
 import praw
 import pybooru
 import youtube_dl
 import topiclist
+
+make = long.makeup()
 
 queue = []
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -69,12 +74,24 @@ reddit = praw.Reddit(client_id = config.client_id,
 shoes = long.sneakers()
 udclient = UrbanClient()
 client = commands.Bot(command_prefix="//")
+client.remove_command("help")
 
 status = ["Playing with myself.", "Reading War and Peace.", "Practicing my juggling skills"]
 
 client.thetitle = ""
 
+def deepfried(img):
+    # Generate color overlay
+    overlay = img.copy()
+    overlay = ImageEnhance.Contrast(overlay).enhance(random.uniform(0.7, 1.8))
+    overlay = ImageEnhance.Brightness(overlay).enhance(random.uniform(0.8, 1.3))
+    overlay = ImageEnhance.Color(overlay).enhance(random.uniform(0.7, 1.4))
 
+    # Blend random colors onto and sharpen the image
+    img = Image.blend(img, overlay, random.uniform(0.1, 0.4))
+    img = ImageEnhance.Sharpness(img).enhance(random.randint(5, 200))
+
+    return img
 
 def listToString(s):
     str1 = "\n \n"
@@ -98,9 +115,14 @@ async def on_message(message):
     else:
         await client.process_commands(message)
     
-@client.command()
+@client.command()   
 async def hello(ctx):
     await ctx.send("Hello there!")
+
+@client.command()
+async def help(ctx):
+    embed = discord.Embed(title="I really love doing useless things.", description=topiclist.helptext, color=0xff00ff)
+    await ctx.send(embed=embed)
 
 @client.command()
 async def advice(ctx):
@@ -112,7 +134,7 @@ async def advice(ctx):
 async def ping(ctx):
     await ctx.send(f'**Pong!** Latency: {round(client.latency * 1000)}ms')
 
-@client.command()
+@client.command(name='dogs', help="I'll return a random dog pic/gif")
 async def dogs(ctx):
     DOG_URL = 'http://api.thedogapi.com/v1/images/search'
     DOG_API_KEY = '3b392042-b329-4b00-a6f6-b14d3b585396'
@@ -124,7 +146,7 @@ async def dogs(ctx):
     embed.set_image(url=thedog[0]['url'])
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="cats", help="Returns a random cat pic/gif")
 async def cats(ctx):
     CAT_URL = 'http://api.thecatapi.com/v1/images/search'
     CAT_API_KEY = 'fccdd277-481e-4ce8-91f6-74494640b167'
@@ -137,11 +159,49 @@ async def cats(ctx):
     await ctx.send(embed=embed)
 
 @client.command()
-async def topic(ctx):
-    topics = [random.choice(topiclist.adults), random.choice(topiclist.kids), random.choice(topiclist.deep), random.choice(topiclist.couples)]
-    await ctx.send(random.choice(topics))
+async def bnw(ctx):
+    try:
+        thename = ctx.message.attachments[0].filename
+        bnwname = "bw_" + str(thename)
+        await ctx.message.attachments[0].save(thename)
+
+        img = Image.open(thename)
+        blackAndWhite = img.convert("L")
+        blackAndWhite.save(bnwname)
+        theFile = discord.File(bnwname)
+        await ctx.send("Here you go.", file=theFile)
+
+    except:
+        await ctx.send("I need an attached file to make this work 🤡")
+
+    #finalname = "bw_" + str(attachment_url)
+    #file_request = requests.get(attachment_url)
 
 @client.command()
+async def deepfry(ctx):
+    try:
+        thename = ctx.message.attachments[0].filename
+        deep = "deep_" + str(thename)
+        await ctx.message.attachments[0].save(thename)
+
+        img = Image.open(thename)
+        theimg = deepfried(img)
+
+        theimg.save(deep)
+
+        mainFile = discord.File(deep)
+
+        await ctx.send("Here you go.", file=mainFile)
+
+    except:
+        await ctx.send("I need an attached file to make this work 🤡")
+
+@client.command()
+async def topic(ctx):
+    topics = [random.choice(topiclist.randlist), random.choice(topiclist.randlist2), random.choice(topiclist.resto), random.choice(topiclist.together), random.choice(topiclist.family), random.choice(topiclist.adults), random.choice(topiclist.kids), random.choice(topiclist.deep), random.choice(topiclist.couples)]
+    await ctx.send(random.choice(topics))
+
+@client.command(name="djoke", help="This returns a dad joke.")
 async def djoke(ctx):
     url = 'https://icanhazdadjoke.com/'
     headers =  { 'Accept': 'application/json' }
@@ -149,8 +209,8 @@ async def djoke(ctx):
     embed = discord.Embed(title="Dad Joke", description= thejoke['joke'], color=0xffffff)
     await ctx.send(embed=embed)
 
-@client.command()
-async def ytdl(ctx, *, message):
+@client.command(name="youtube", help="Send a Youtube link and I'll return an m4a audio file.")
+async def youtube(ctx, *, message):
     #title = client.thetitle
     video = pafy.new(message)
     filenom = video.title + ".m4a"
@@ -160,7 +220,7 @@ async def ytdl(ctx, *, message):
     mainfile = discord.File(filenom)
     await ctx.send("Here you go.", file=mainfile)
 
-@client.command()
+@client.command(name="fourch", help="Sends a random 4chan comment from various boards.")
 async def fourch(ctx):
     boardlist = ['g', 'pol', 'tv', 'a', 'x', 'jp', 'lit']
     boardcounter = random.choice(boardlist)
@@ -190,7 +250,7 @@ async def fourch(ctx):
     except Exception as e:
         await ctx.send(e)    
 
-@client.command()
+@client.command(name="quotes", help="Returns an inspirational quote from famous figures.")
 async def quotes(ctx):
     url = 'https://api.quotable.io/random'
     quote = requests.get(url).json()
@@ -198,7 +258,7 @@ async def quotes(ctx):
     await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(name="mshoes", help="Returns a random, newly-released pair of men's shoes.")
 async def mshoes(ctx):
     menshoes = shoes.getShoes("mshoes")
     imgurl = menshoes.pop()
@@ -206,7 +266,7 @@ async def mshoes(ctx):
     embed.set_image(url=imgurl)
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="fshoes", help="Returns a random, newly-released pair of women's shoes.")
 async def fshoes(ctx):
     femshoes = shoes.getShoes("wshoes")
     imgurl = femshoes.pop()
@@ -215,14 +275,14 @@ async def fshoes(ctx):
     await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(name="flip", help="Flips a coin.")
 async def flip(ctx):
     coin = ['heads', 'tails']
     await ctx.send("I flipped a coin and it's {}".format(random.choice(coin)))
 
 
 
-@client.command()
+@client.command(name="urban", help="Add it with a word you want to search, and I'll return its urban definition.")
 async def urban(ctx, *, msg):
     try:
         defenesyon = udclient.get_definition(msg)
@@ -242,7 +302,7 @@ async def urban(ctx, *, msg):
     except Exception as e:
         await ctx.send(e)
 
-@client.command()
+@client.command(name="zalgofy", help="Send some text and I'll fuck it up!")
 async def zalgofy(ctx, *, text):
     
     zal_chars = ' ̷̡̛̮͇̝͉̫̭͈͗͂̎͌̒̉̋́͜ ̵̠͕͍̩̟͚͍̞̳̌́̀̑̐̇̎̚͝ ̸̻̠̮̬̻͇͈̮̯̋̄͛̊͋̐̇͝͠ ̵̧̟͎͈̪̜̫̪͖̎͛̀͋͗́̍̊͠ ̵͍͉̟͕͇͎̖̹̔͌̊̏̌̽́̈́͊ͅ ̷̥͚̼̬̦͓͇̗͕͊̏͂͆̈̀̚͘̚ ̵̢̨̗̝̳͉̱̦͖̔̾͒͊͒̎̂̎͝ ̵̞̜̭̦̖̺͉̞̃͂͋̒̋͂̈́͘̕͜ ̶̢̢͇̲̥̗̟̏͛̇̏̊̑̌̔̚ͅͅ ̷̮͖͚̦̦̞̱̠̰̍̆̐͆͆͆̈̌́ ̶̲͚̪̪̪͍̹̜̬͊̆͋̄͒̾͆͝͝ ̴̨̛͍͖͎̞͍̞͕̟͑͊̉͗͑͆͘̕ ̶͕̪̞̲̘̬͖̙̞̽͌͗̽̒͋̾̍̀ ̵̨̧̡̧̖͔̞̠̝̌̂̐̉̊̈́́̑̓ ̶̛̱̼̗̱̙͖̳̬͇̽̈̀̀̎̋͌͝ ̷̧̺͈̫̖̖͈̱͎͋͌̆̈̃̐́̀̈'.replace(" ", "")
@@ -259,10 +319,12 @@ async def zalgofy(ctx, *, text):
         letter += random.choice(zal_chars)
         letter += random.choice(zal_chars)
         zalgo_text += letter
+
+    
     
     await ctx.send(zalgo_text)
 
-@client.command()
+@client.command(name="emojify", help="Send some text and I'll emoji the shit out of it. 🅱️")
 async def emojify(ctx, *, text):
     emoji = list("😂😝🤪🤩😤🥵🤯🥶😱🤔😩🙄💀👻🤡😹👀👁👌💦🔥🌚🌝🌞🔫💯")
     b_emoji = "🅱️"
@@ -290,7 +352,7 @@ async def emojify(ctx, *, text):
 
     await ctx.send(emoji_text)
     
-@client.command()
+@client.command(name="cheemify", help="Ever wonder how your text will sound if Cheems spoke it? Why not try this one.")
 async def cheemify(ctx, *, text):
     text = text.replace("ese", "ms")
     text = text.replace("se", "mse")
@@ -310,7 +372,7 @@ async def cheemify(ctx, *, text):
 
     await ctx.send(text)
 
-@client.command()
+@client.command(name="owofy", help="Imma convert your text into owo. You know, that cringy anime shit.")
 async def owofy(ctx, *, text):
     owo_faces = "owo uwu owu uwo u-u o-o OwO UwU @-@ ;-; ;_; ._. (._.) (o-o) ('._.) (｡◕‿‿◕｡)" \
     " (｡◕‿◕｡) (─‿‿─) ◔⌣◔ ◉_◉".split(sep=" ")
@@ -328,7 +390,7 @@ async def owofy(ctx, *, text):
 
     await ctx.send(text)
 
-@client.command()
+@client.command(name="av", help="Returns avatar.")
 async def av(ctx, user: discord.User):
     try:
         embed = discord.Embed(title=str(user.name) + "'s Avatar: ", color=0xffffff)
@@ -336,9 +398,9 @@ async def av(ctx, user: discord.User):
         await ctx.send(embed=embed)
 
     except Exception as e:
-        await ctx.send(e)
+        await ctx.send("Mention the guy, my guy. 🅱️")
 
-@client.command()
+@client.command(name="urand", help="Returns a random urban dictionary definition.")
 async def urand(ctx):
     try:
         defenesyon = udclient.get_random_definition()
@@ -361,7 +423,7 @@ async def urand(ctx):
         await ctx.send(e)
 
 
-@client.command()
+@client.command(name="news", help="Returns a random news from BBC.")
 async def news(ctx):
     thenews = long.getNews()
     img = thenews.pop()
@@ -370,7 +432,7 @@ async def news(ctx):
     await ctx.send(thenews[0])
 
 
-@client.command()
+@client.command(name="corona", help="Returns the latest Coronavirus news in the Philippines")
 async def corona(ctx):
     url = 'https://covid-193.p.rapidapi.com/statistics'
     querystring = { "country": "Philippines" }
@@ -383,12 +445,12 @@ async def corona(ctx):
     response = requests.request("GET", url, headers=headers, params=querystring).json()
     data = response['response']
     d = data[0]
-    disease = ['All: ' + str(d['cases']['total']), 'Recovered: ' + str(d['cases']['recovered']), 'Deaths: ' + str(d['deaths']['total']), 'New: ' + str(d['cases']['new']), 'Critical: ' + str(d['cases']['critical']), 'Time: ' + (str(dateutil.parser.parse(d['time'])))]
+    disease = ['\n\n**All:** ' + str(d['cases']['total']), '**Recovered:** ' + str(d['cases']['recovered']), '**Deaths:** ' + str(d['deaths']['total']), '**New:** ' + str(d['cases']['new']), '**Critical:** ' + str(d['cases']['critical']), '**Time:** ' + (str(dateutil.parser.parse(d['time'])))]
     embed = discord.Embed(title="**Philippines Coronavirus Updates as of {}".format((str(dateutil.parser.parse(d['time'])))) +"**", description=listToString(disease))
     await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(name="wlist", help="Returns a list of Wikipedia articles based on your query.")
 async def wlist(ctx, *, msg):
     try:
         wiki_results = wikipedia.search(msg)
@@ -406,7 +468,7 @@ async def wlist(ctx, *, msg):
     except:
         await ctx.send("It looks like an error occurred!")
 
-@client.command()
+@client.command(name="wiki", help="Returns a single Wikipedia article about said query.")
 async def wiki(ctx, *, msg):
     try:
         wigi = msg
@@ -449,10 +511,9 @@ async def rsubpost(ctx):
         thesub = reddit.random_subreddit()
         submission = thesub.random()
         embed = discord.Embed(title=submission.title, description=submission.selftext + "\n" + submission.url, color=0xffffff)
-        try:
-            embed.set_image(submission.url)
-        except:
-            pass
+        
+        if submission.url[-3:] == "jpg" or submission.url[-3:] == "png" or submission.url[-3:] == "gif":
+            embed.set_image(url=submission.url)
 
         await ctx.send(embed=embed)
 
@@ -461,17 +522,14 @@ async def rsubpost(ctx):
         await ctx.send("There seems to be an error.")
 
 
-@client.command()
+@client.command(name="rrand", help="I'll return a single random reddit post from your desired subreddit.")
 async def rrand(ctx, *, msg):
     try:
         submission = reddit.subreddit(msg).random()
         embed=discord.Embed(title=submission.title, description=submission.selftext + "\n" + submission.url, color=0xffffff)
         
-        try:
-            embed.set_image(submission.url)
-
-        except:
-            pass
+        if submission.url[-3:] == "jpg" or submission.url[-3:] == "png" or submission.url[-3:] == "gif":
+            embed.set_image(url=submission.url)
         
         embed.set_footer(text="Command invoked by {}".format(ctx.message.author.name))
         
@@ -480,7 +538,7 @@ async def rrand(ctx, *, msg):
     except Exception as e:
         await ctx.send(e)
 
-@client.command()
+@client.command(name="dict", help="I'll return a dictionary definition from your desired word.")
 async def dict(ctx, *, msg):
     dictlogic = long.googledict()
     try:
@@ -495,7 +553,7 @@ async def dict(ctx, *, msg):
     except Exception as e:
         await ctx.send(e)
 
-@client.command()
+@client.command(name="rhot", help="Returns 5 hottest posts from your desired subreddit.")
 async def rhot(ctx, *, msg):
     redditlogic = long.reddit()
     try:
@@ -507,7 +565,7 @@ async def rhot(ctx, *, msg):
     except Exception as e:
         await ctx.send(e)
 
-@client.command()
+@client.command(name="rnew", help="Returns 5 new posts from your desired subreddit.")
 async def rnew(ctx, *, msg):
     redditlogic = long.reddit()
     try:
@@ -520,7 +578,7 @@ async def rnew(ctx, *, msg):
         await ctx.send(e)
 
 
-@client.command()
+@client.command(name="rnsfw", help="Returns an **NSFW** reddit post.")
 async def rnsfw(ctx):
     try:
         if ctx.channel.is_nsfw():
@@ -534,7 +592,7 @@ async def rnsfw(ctx):
     except:
         await ctx.send("There must be an error in general")
 
-@client.command()
+@client.command(name="facts", help="Returns a random fact, albeit useless.")
 async def facts(ctx):
     url = "https://uselessfacts.jsph.pl/random.json"
     facts = requests.get(url, params={"language": "en"}).json()
@@ -543,7 +601,7 @@ async def facts(ctx):
 
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="words", help="Returns a word that **does not exist.**")
 async def words(ctx):
     url = "https://www.thisworddoesnotexist.com/api/random_word.json"
     word = requests.get(url).json()
@@ -678,7 +736,7 @@ async def hug(ctx, user: discord.User):
     embed.set_image(url=neko['url'])
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="smug", help="Haha fuck someone.")
 async def smug(ctx, user: discord.User):
     NEKO_URL = "https://nekos.life/api/v2/img/smug"
     neko = requests.get(NEKO_URL).json()
@@ -686,7 +744,7 @@ async def smug(ctx, user: discord.User):
     embed.set_image(url=neko['url'])
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="slap", help="Show your anger. Slap him/her!")
 async def slap(ctx, user: discord.User):
     NEKO_URL = "https://nekos.life/api/v2/img/slap"
     neko = requests.get(NEKO_URL).json()
@@ -694,7 +752,15 @@ async def slap(ctx, user: discord.User):
     embed.set_image(url=neko['url'])
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="baka", help="Haha I'm with stupid.")
+async def baka(ctx, user: discord.User):
+    NEKO_URL = "https://nekos.life/api/v2/img/baka"
+    neko = requests.get(NEKO_URL).json()
+    embed = discord.Embed(title="Stupid!", description= "**" + ctx.message.author.name + " just called " + str(user.name) + "stupid!**")
+    embed.set_image(url=neko['url'])
+    await ctx.send(embed=embed)
+
+@client.command(name="cuddle", help="Mention someone to cuddle him/her.")
 async def cuddle(ctx, user: discord.User):
     NEKO_URL = "https://nekos.life/api/v2/img/cuddle"
     neko = requests.get(NEKO_URL).json()
@@ -702,7 +768,7 @@ async def cuddle(ctx, user: discord.User):
     embed.set_image(url=neko['url'])
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="pat", help="Mention someone to pat him/her in the head.")
 async def pat(ctx, user: discord.User):
     NEKO_URL = "https://nekos.life/api/v2/img/pat"
     neko = requests.get(NEKO_URL).json()
@@ -710,7 +776,7 @@ async def pat(ctx, user: discord.User):
     embed.set_image(url=neko['url'])
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="kiss", help="Mention someone in the server to kiss him/her.")
 async def kiss(ctx, user: discord.User):
     NEKO_URL = "https://nekos.life/api/v2/img/kiss"
     neko = requests.get(NEKO_URL).json()
@@ -718,7 +784,7 @@ async def kiss(ctx, user: discord.User):
     embed.set_image(url=neko['url'])
     await ctx.send(embed=embed)
 
-@client.command()
+@client.command(name="blowjob", help="NSFW (duh). Mention someone in the server to blow him/her.")
 async def blowjob(ctx, user: discord.User):
 
     if ctx.channel.is_nsfw():
@@ -731,7 +797,7 @@ async def blowjob(ctx, user: discord.User):
     else:
         await ctx.send("This command is for NSFW channels only!!")
 
-@client.command()
+@client.command(name="fuck", help="NSFW feature. Mention someone to fuck him/her.")
 async def fuck(ctx, user: discord.User):
 
     if ctx.channel.is_nsfw():
@@ -745,7 +811,7 @@ async def fuck(ctx, user: discord.User):
     else:
         await ctx.send("This command is for NSFW channels only!!")
 
-@client.command()
+@client.command(name="spank", help="Mention someone in the server to spank him/her.")
 async def spank(ctx, user: discord.User):
 
     if ctx.channel.is_nsfw():
@@ -758,7 +824,7 @@ async def spank(ctx, user: discord.User):
     else:
         await ctx.send("This command is for NSFW channels only!!")
     
-@client.command()
+@client.command(name="ratewaifu", help="I'll rate your waifu if he/she trash or not.")
 async def ratewaifu(ctx, user: discord.User):
     try:
         rating = str(random.randint(1, 10))
@@ -766,6 +832,24 @@ async def ratewaifu(ctx, user: discord.User):
 
     except:
         await ctx.send("Hmmm.. That isn't a valid user.")
+
+@client.command()
+async def weather(ctx, *, msg):
+    try:
+        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=1b453b589a0691c857ddc95f0921df69'
+        r = requests.get(url.format(msg)).json()
+        temperature = str(r['main']['temp'])
+        description = r['weather'][0]['description'].capitalize()
+        icon = r['weather'][0]['icon']
+        imgurl = 'http://openweathermap.org/img/w/{}.png'.format(icon)
+
+        embed = discord.Embed(title="Weather for {}".format(msg), description= "**Temperature: " + temperature + "°C**\n" + "**Description: " + description + "**")
+        embed.set_thumbnail(url=imgurl)
+
+        await ctx.send(embed=embed)
+
+    except Exception as e:
+        await ctx.send("It looks like the source doesn't have any data over that city, or maybe what I read was not a city.")
 
 @client.command()
 async def ball(ctx, *, msg):
@@ -805,12 +889,17 @@ async def join(ctx):
     await channel.connect()
 
 @client.command(name='play', help='This command plays songs')
-async def play(ctx, *, url):
+async def play(ctx, url):
     global queue
 
-    if not queue:
-        queue.append(url)
-        await ctx.send(f'`{url}` added to queue!')
+    try:
+        if not queue:
+            queue.append(url)
+            await ctx.send(f'`{url}` added to queue!')
+
+    except:
+        url=""
+        pass
 
     server = ctx.message.guild
     voice_channel = server.voice_client
@@ -859,4 +948,156 @@ async def leave(ctx):
     voice_client = ctx.message.guild.voice_client
     await voice_client.disconnect()
 
-client.run()
+
+@client.command()
+async def lipstick(ctx):
+    url = 'http://makeup-api.herokuapp.com/api/v1/products.json?product_type=lipstick'
+    a, color, tags = make.makeapp(url)
+
+    embed = discord.Embed(title="Lipstick", description=listToString(a))
+    
+    try:
+        img = a[4].replace("Image: ", "")
+        embed.set_image(url=img)
+    
+    except:
+        pass
+
+    await ctx.send(embed=embed)
+
+
+@client.command()
+async def blush(ctx):
+    url = 'http://makeup-api.herokuapp.com/api/v1/products.json?product_type=blush'
+    a, color, tags = make.makeapp(url)
+
+    embed = discord.Embed(title="Blush", description=listToString(a))
+    
+    try:
+        img = a[4].replace("Image: ", "")
+        embed.set_image(url=img)
+
+    except:
+        pass
+
+    await ctx.send(embed=embed)
+
+@client.command()
+async def mascara(ctx):
+    url = 'http://makeup-api.herokuapp.com/api/v1/products.json?product_type=mascara'
+    a, color, tags = make.makeapp(url)
+
+    embed = discord.Embed(title="Mascara", description=listToString(a))
+    
+    try:
+        img = a[4].replace("Image: ", "")
+        embed.set_image(url=img)
+
+    except:
+        pass
+
+    await ctx.send(embed=embed)
+
+
+@client.command()
+async def eyeliner(ctx):
+    url = 'http://makeup-api.herokuapp.com/api/v1/products.json?product_type=eyeliner'
+    a, color, tags = make.makeapp(url)
+
+    embed = discord.Embed(title="Eyeliner", description=listToString(a))
+    
+    try:
+        img = a[4].replace("Image: ", "")
+        embed.set_image(url=img)
+
+    except:
+        pass
+
+    await ctx.send(embed=embed)
+
+@client.command()
+async def foundation(ctx):
+    url = 'http://makeup-api.herokuapp.com/api/v1/products.json?product_type=foundation'
+    a, color, tags = make.makeapp(url)
+
+    embed = discord.Embed(title="Foundation", description=listToString(a))
+    
+    try:
+        img = a[4].replace("Image: ", "")
+        embed.set_image(url=img)
+
+    except:
+        pass
+
+    await ctx.send(embed=embed)
+
+@client.command()
+async def polish(ctx):
+    url = 'http://makeup-api.herokuapp.com/api/v1/products.json?product_type=nail_polish'
+    a, color, tags = make.makeapp(url)
+
+    embed = discord.Embed(title="Nail Polish", description=listToString(a))
+    
+    try:
+        img = a[4].replace("Image: ", "")
+        embed.set_image(url=img)
+
+    except:
+        pass
+
+    await ctx.send(embed=embed)
+
+@client.command()
+async def lipliner(ctx):
+    url = 'http://makeup-api.herokuapp.com/api/v1/products.json?product_type=lip_liner'
+    a, color, tags = make.makeapp(url)
+
+    embed = discord.Embed(title="Lip Liner", description=listToString(a))
+    
+    try:
+        img = a[4].replace("Image: ", "")
+        embed.set_image(url=img)
+
+    except:
+        pass
+
+    await ctx.send(embed=embed)
+
+
+@client.command()
+async def op(ctx, *, msg):
+    try:
+        url = 'https://onepiececover.com/api/chapters/{}'.format(msg)
+        ep = requests.get(url).json()
+        img = ep['cover_images']
+        bruh = []
+
+        i = 0
+
+        while i <= 83:
+            bruh.append(img[i])
+            i+=1
+
+        img = "".join(bruh)
+
+        embed = discord.Embed(title=ep['title'], description=ep['summary'])
+        embed.set_image(url=img)
+
+        await ctx.send(embed=embed)
+
+
+    except Exception as e:
+        await ctx.send(e)
+        #await ctx.send("I need a number, or maybe I've received a very high number?")
+    
+@client.command()
+async def randpic(ctx):
+    urls = ['https://source.unsplash.com/random', 'https://picsum.photos/500/500']
+    url = random.choice(urls)
+    img = requests.get(url)
+    embed= discord.Embed(title="Random Pic")
+    embed.set_image(url=img.url)
+    await ctx.send(embed=embed)
+
+
+client.run("")
