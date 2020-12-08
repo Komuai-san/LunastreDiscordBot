@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands, tasks
 import random
 import requests
-
+import os
 import json
 import pafy
 import asyncio
@@ -1095,4 +1095,4 @@ async def say(ctx, channel: discord.TextChannel, *msg):
     msg = " ".join(msg)
     await channel.send(msg)
 
-client.run(config.mark)
+client.run(os.environ.get('KEY'))

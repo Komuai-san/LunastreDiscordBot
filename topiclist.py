@@ -12,7 +12,7 @@ helptext = """
 Well, I can do a trick or two. Just read them all. My prefix is `~`
 
 **Moderation**
-`kick`, `ban`, `mute`, `unmute`, `clear`
+`kick`, `ban`, `mute`, `unmute`, `clear`, `say + (channel name) + your message`
 
 **Useful**
 `ping`, `av + (mention User)`, `dict + (word)`, `wiki + (word)`, `wlist + (word)`, `corona`, `weather + (city/country)`
@@ -21,10 +21,8 @@ Well, I can do a trick or two. Just read them all. My prefix is `~`
 `news`, `urand`, `urban + (word)`, `advice`, `topic`, `quotes`, `facts`, `mshoes`, `fshoes`
 
 **Fun**
-`dogs`, `cats`, `words`, `cheemify + (word)`, `owofy + (word)`, `emojify + (word)`, `zalgofy + (word)`, `flip`, `djoke`, `ball + (your question)`
+`dogs`, `cats`, `words`, `cheemify + (word)`, `owofy + (word)`, `emojify + (word)`, `zalgofy + (word)`, `flip`, `djoke`, `ball + (your question)`, `randpic`
 
-**Music (Still in construction)**
-`play + (youtube url)`, `stop`, `queue + (youtube url)`, `resume`, `view`, `pause`, `leave`
 
 **Convert Youtube URL to music (.m4a)**
 `youtube + (youtube url)`
@@ -50,10 +48,16 @@ Well, I can do a trick or two. Just read them all. My prefix is `~`
 **Reddit/4chan**
 `rrand + (subreddit)`, `rrising`, `rsubpost`, `rhot + (subreddit)`, `rnew + (subreddit)`, `rnsfw`, `fourch`
 
-
+**Makeup**
+`lipstick`, `lipliner`, `mascara`, `foundation`, `eyeliner`, `blush`, `polish`
 
 
 
 """
 
-#changes - op (one piece summary), lipstick, lipliner, mascara, foundation, eyeliner, blush, polish
+#changes - op (one piece summary), 
+
+"""
+**Music (Still in construction)**
+`play + (youtube url)`, `stop`, `queue + (youtube url)`, `resume`, `view`, `pause`, `leave`
+"""
