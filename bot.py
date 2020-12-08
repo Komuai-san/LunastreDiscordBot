@@ -22,49 +22,6 @@ import topiclist
 
 make = long.makeup()
 
-queue = []
-youtube_dl.utils.bug_reports_message = lambda: ''
-ytdl_format_options = { 
-    'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0'
-}
-
-ffmpeg_options = {
-    'options': '-vn'
-}
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-
-class YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=0.5):
-        super().__init__(source, volume)
-
-        self.data = data
-
-        self.title = data.get('title')
-        self.url = data.get('url')
-
-    @classmethod
-    async def from_url(cls, url, *, loop=None, stream=False):
-        loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: youtube_dl.YoutubeDL(ytdl_format_options).extract_info(url, download=not stream))
-
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
-
-        filename = data['url'] if stream else youtube_dl.YoutubeDL(ytdl_format_options).prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
-
 reddit = praw.Reddit(client_id = config.client_id,
                      client_secret = config.client_secret,
                      username = config.username,
@@ -73,12 +30,15 @@ reddit = praw.Reddit(client_id = config.client_id,
 
 shoes = long.sneakers()
 udclient = UrbanClient()
-client = commands.Bot(command_prefix="//")
+client = commands.Bot(command_prefix="~")
 client.remove_command("help")
 
-status = ["Playing with myself.", "Reading War and Peace.", "Practicing my juggling skills"]
+status = ["with myself.", "Reading War and Peace.", "Practicing my juggling skills"]
 
 client.thetitle = ""
+
+
+
 
 def deepfried(img):
     # Generate color overlay
@@ -114,7 +74,128 @@ async def on_message(message):
             await client.process_commands(message)
     else:
         await client.process_commands(message)
+
+#MOD
+@client.command()
+@commands.has_permissions(manage_channels = True)
+async def lock(ctx):
+    try:
+        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages = False)
+        await ctx.send(ctx.channel.mention + " ***is now under siege, under lockdown.***")
+    except:
+        await ctx.send("I don't have permission to do this!")
+
+@client.command()
+@commands.has_permissions(manage_channels = True)
+async def unlock(ctx):
+    try:
+        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages = True)
+        await ctx.send(ctx.channel.mention + " ***is now unlocked.***")
+    except:
+        await ctx.send("I don't have permission to do this!")
+
+@client.command()
+@commands.has_permissions(manage_messages=True)
+async def clear(ctx, *, msg):
+    try:
+        await ctx.send("Messages Purged: {}".format(msg))
+        await ctx.channel.purge(limit=int(msg) + 1)
+
+    except:
+        await ctx.send("I didn't receive a number! Or I don't have permission to do this.")
     
+@client.command()
+async def kick(ctx, member : discord.Member, *, msg):
+    try:
+        if ctx.message.author.server_permissions.administrator:
+            await member.kick(reason=msg)
+            await ctx.send(f'Yeeted {member.mention}')
+        else:
+            await ctx.send("Sorry, you're not an administrator.")
+
+    except:
+        await ctx.send("Member not found, or I don't have any permissions to do this.")
+
+@client.command()
+async def ban(ctx, member : discord.Member, *, msg):
+    try:
+        if ctx.message.author.server_permissions.administrator:
+            await member.ban(reason=msg)
+            await ctx.send(f'Banned {member.mention}!!!')
+
+        else:
+            await ctx.send("Sorry, you're not an administrator.")
+    except:
+        await ctx.send("Member not found, or I don't have any permissions to do this.")
+
+@client.command()
+async def unban(ctx, *, member):
+    try:
+        if ctx.message.author.server_permissions.administrator:
+            banned_users = await ctx.guild.bans()
+            member_name, member_discriminator = member.split()
+
+            for ban_entry in banned_users:
+                user = ban_entry.user
+
+                if (user.name, user.discriminator) == (member_name, member_discriminator):
+                    await ctx.guild.unban(user)
+                    await ctx.send(f'Ubanned {user.mention}!')
+                    return 
+        else:
+            await ctx.send("Sorry, you're not an administrator.")
+
+    except:
+        await ctx.send("User not found, or I don't have permissions to do this!")
+
+@client.command()
+async def super(ctx, member : discord.Member):
+    try:
+        index = 0
+        while index <= 14:
+            await ctx.send(member.mention)
+            index +=1 
+    except:
+        await ctx.send("User not found!")
+
+@client.command()
+async def mute(ctx, member : discord.Member):
+    try:
+        guild = ctx.guild
+
+        for role in guild.roles:
+            if role.name == "Muted":
+                await member.add_roles(role)
+                await ctx.send("{} has been muted by {}".format(member.mention, ctx.author.mention))
+                return
+
+                overwrite = discord.PermissionOverwrite(send_messages=False)
+                newRole = await guild.create_role(name="Muted")
+
+                for channel in guild.text_channels:
+                    await channel.set_permissions(newRole, overwrite=overwrite)
+
+                await member.add_roles(newRole)
+                await ctx.send("{} has been muted by {}".format(member.mention, ctx.author.mention))
+
+    except:
+        await ctx.send("User not found, or I don't have the permissions.")
+
+@client.command()
+async def unmute(ctx, member : discord.Member):
+    try:
+        guild = ctx.guild
+
+        for role in guild.roles:
+            if role.name == "Muted":
+                await member.remove_roles(role)
+                await ctx.send("{} has been unmuted by {}".format(member.mention, ctx.author.mention))
+                return
+
+    except:
+        await ctx.send("Member must be an administrator or I don't have permission to do that!")
+
+
 @client.command()   
 async def hello(ctx):
     await ctx.send("Hello there!")
@@ -856,98 +937,6 @@ async def ball(ctx, *, msg):
     choices = ["As I see it, yes,", "Ask again later,", "Better not tell you now,", "Cannot predict now,", "Concentrate and ask again,", "Don’t count on it,","It is certain,", "It is decidedly so,", "Most likely,", "My reply is no,", "My sources say no.", "Outlook not so good.", "Outlook good.", "Reply hazy, try again,", "Signs point to yes,", "Very doubtful,", "Without a doubt,", "Yes,", "Yes – definitely,", "You may rely on it,"]
     
     await ctx.send("🎱| " + random.choice(choices) + " " + "**" + ctx.message.author.name + "**")
-        
-#MUSIC
-@client.command(name='queue', help='This command adds a song to the queue')
-async def queue_(ctx, url):
-    global queue
-
-    queue.append(url)
-    await ctx.send(f'`{url}` added to queue!')
-
-
-@client.command(name='remove', help='This command removes an item from the list')
-async def remove(ctx, number):
-    global queue
-
-    try:
-        del(queue[int(number)])
-        await ctx.send(f'Your queue is now `{queue}!`')
-    
-    except:
-        await ctx.send('Your queue is either **empty** or the index is **out of range**')
-
-@client.command(name='join', help='This command makes the bot join the voice channel')
-async def join(ctx):
-    if not ctx.message.author.voice:
-        await ctx.send("You are not connected to a voice channel")
-        return
-    
-    else:
-        channel = ctx.message.author.voice.channel
-
-    await channel.connect()
-
-@client.command(name='play', help='This command plays songs')
-async def play(ctx, url):
-    global queue
-
-    try:
-        if not queue:
-            queue.append(url)
-            await ctx.send(f'`{url}` added to queue!')
-
-    except:
-        url=""
-        pass
-
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    async with ctx.typing():
-        player = await YTDLSource.from_url(queue[0], loop=client.loop)
-        voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-
-    await ctx.send('**Now playing:** {}'.format(player.title))
-
-    try:
-        del(queue[0])
-    except:
-        pass
-
-
-
-@client.command(name='stop', help='This command stops the song!')
-async def stop(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.stop()
-
-@client.command(name='view', help='This command shows the queue')
-async def view(ctx):
-    await ctx.send(f'Your queue is now `{queue}!`')
-
-
-@client.command(name='resume', help='This command resumes the song!')
-async def resume(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.resume()
-
-@client.command(name='pause', help='This command pauses the song')
-async def pause(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.pause()
-
-@client.command(name='leave', help='This command stops makes the bot leave the voice channel')
-async def leave(ctx):
-    voice_client = ctx.message.guild.voice_client
-    await voice_client.disconnect()
-
 
 @client.command()
 async def lipstick(ctx):
@@ -1100,4 +1089,10 @@ async def randpic(ctx):
     await ctx.send(embed=embed)
 
 
-client.run("")
+@client.command()
+@commands.has_permissions(manage_channels = True)
+async def say(ctx, channel: discord.TextChannel, *msg):
+    msg = " ".join(msg)
+    await channel.send(msg)
+
+client.run(config.mark)

@@ -99,6 +99,7 @@ class makeup:
                     continue
 
             try:
+                index = 0
                 while index <=10:
                     try:
                         color.append(mek[rando]['product_colors'][index]['colour_name'])

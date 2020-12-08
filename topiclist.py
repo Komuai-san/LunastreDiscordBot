@@ -9,22 +9,37 @@ randlist = ['What was the last funny video you saw?', 'What do you do to get rid
 randlist2 = ['What do you bring with you everywhere you go?', 'How much time do you spend on the internet? What do you usually do?', 'What is the most disgusting habit some people have?', 'Where and when was the most amazing sunset you have ever seen?', 'Which recent news story is the most interesting?', 'Where is the worst place you have been stuck for a long time?', 'If you had to change your name, what would your new name be?', 'What is something that really annoys you but doesn’t bother most people?', 'What word or saying from the past do you think should come back?', 'How should success be measured? And by that measurement, who is the most successful person you know?', 'What is your guilty pleasure?', 'Was there ever an event in your life that defied explanation?', 'If you could learn the answer to one question about your future, what would the question be?', 'Has anyone ever saved your life?', 'What benefit do you bring to the group when you hang out with friends?', 'How often do you curse? And what’s your go-to string of curse words?', 'What trends did you follow when you were younger?', 'What do you fear is hiding in the dark?', 'What was the best period of your life so far? What do you think will be the best period of your entire life?', 'What do you do to improve your mood when you are in a bad mood?', 'What is the silliest fear you have?', 'What are some things you want to accomplish before you die?', 'What is the best room in your house? Why?', 'Who is someone popular now that you really like? Why do you like them so much?', 'Where is the best place to take a date?', 'What smell brings back great memories?', 'What’s the best pet name you can come up with for a specific type of pet? (Like these orange cat names.)', 'How often do you help others? Who do you help? How do you help?', 'What are you best at?', 'What makes you nervous?', 'Who is the funniest person you’ve met?', 'What weird or useless talent do you have?', 'What are some strange beliefs that some people have?', 'Who would be the worst person to be stuck in an elevator with? How about the best person to be stuck in an elevator with?', 'What was the best birthday wish or gift you’ve ever received?']
 
 helptext = """
-Well, I can do a trick or two. Just read them all. My prefix is `//`
+Well, I can do a trick or two. Just read them all. My prefix is `~`
+
+**Moderation**
+`kick`, `ban`, `mute`, `unmute`, `clear`
 
 **Useful**
-`ping`, `av + (mention User)`, `dict + (word)`, `wiki + (word)`, `wlist + (word)`, `corona`, `news`, `urand`, `urban + (word)`, `advice`, `topic`, `quotes`, `facts`, `mshoes`, `fshoes`
+`ping`, `av + (mention User)`, `dict + (word)`, `wiki + (word)`, `wlist + (word)`, `corona`, `weather + (city/country)`
+
+**Useful 2**
+`news`, `urand`, `urban + (word)`, `advice`, `topic`, `quotes`, `facts`, `mshoes`, `fshoes`
 
 **Fun**
 `dogs`, `cats`, `words`, `cheemify + (word)`, `owofy + (word)`, `emojify + (word)`, `zalgofy + (word)`, `flip`, `djoke`, `ball + (your question)`
 
 **Music (Still in construction)**
-`play + (youtube url)`, `stop`, `queue + (youtube url)`, `resume`, `view`, `pause`, `youtube + (youtube url)`, `leave`
+`play + (youtube url)`, `stop`, `queue + (youtube url)`, `resume`, `view`, `pause`, `leave`
+
+**Convert Youtube URL to music (.m4a)**
+`youtube + (youtube url)`
+
+**MASS PING**
+`super + (user)`
 
 **Image Manipulation**
 `deepfry + (attachment)`, `bnw + (attachment)`
 
 **Anime**
 `neko`, `moe`, `dans`
+
+**One Piece Manga Chapter Summaries**
+`op + (chapter)`
 
 **Interactions (Mention a user!)**
 `hug`, `kiss`, `pat`, `slap`, `cuddle`, `baka`, `smug`, `ratewaifu`
