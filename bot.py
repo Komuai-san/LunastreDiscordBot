@@ -299,8 +299,8 @@ async def djoke(ctx):
 async def youtube(ctx, *, message):
     #title = client.thetitle
     video = pafy.new(message)
-    filenom = video.title + ".m4a"
-    audio = video.getbestaudio(preftype="m4a")
+    filenom = video.title + ".mp3"
+    audio = video.getbestaudio(preftype="mp3")
     file = audio.download()
     channel = ctx.message.channel
     mainfile = discord.File(filenom)
