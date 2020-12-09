@@ -105,6 +105,7 @@ async def clear(ctx, *, msg):
         await ctx.send("I didn't receive a number! Or I don't have permission to do this.")
     
 @client.command()
+@commands.has_permissions(ban_members=True, kick_members=True)
 async def kick(ctx, member : discord.Member, *, msg):
     try:
         if ctx.message.author.server_permissions.administrator:
@@ -117,6 +118,7 @@ async def kick(ctx, member : discord.Member, *, msg):
         await ctx.send("Member not found, or I don't have any permissions to do this.")
 
 @client.command()
+@commands.has_permissions(ban_members=True, kick_members=True)
 async def ban(ctx, member : discord.Member, *, msg):
     try:
         if ctx.message.author.server_permissions.administrator:
@@ -129,6 +131,7 @@ async def ban(ctx, member : discord.Member, *, msg):
         await ctx.send("Member not found, or I don't have any permissions to do this.")
 
 @client.command()
+@commands.has_permissions(ban_members=True, kick_members=True)
 async def unban(ctx, *, member):
     try:
         if ctx.message.author.server_permissions.administrator:
@@ -159,6 +162,7 @@ async def super(ctx, member : discord.Member):
         await ctx.send("User not found!")
 
 @client.command()
+@commands.has_permissions(manage_channels = True)
 async def mute(ctx, member : discord.Member):
     try:
         guild = ctx.guild
@@ -182,6 +186,7 @@ async def mute(ctx, member : discord.Member):
         await ctx.send("User not found, or I don't have the permissions.")
 
 @client.command()
+@commands.has_permissions(manage_channels = True)
 async def unmute(ctx, member : discord.Member):
     try:
         guild = ctx.guild
@@ -1095,4 +1100,4 @@ async def say(ctx, channel: discord.TextChannel, *msg):
     msg = " ".join(msg)
     await channel.send(msg)
 
-client.run(os.environ.get('KEY'))
+client.run(os.environ['KEY'])
