@@ -533,7 +533,7 @@ async def corona(ctx, *, msg):
         data = response['response']
         d = data[0]
         disease = ['\n\n**All:** ' + str(d['cases']['total']), '**Recovered:** ' + str(d['cases']['recovered']), '**Deaths:** ' + str(d['deaths']['total']), '**New:** ' + str(d['cases']['new']), '**Critical:** ' + str(d['cases']['critical']), '**Time:** ' + (str(dateutil.parser.parse(d['time'])))]
-        embed = discord.Embed(title="**Philippines Coronavirus Updates as of {}".format((str(dateutil.parser.parse(d['time'])))) +"**", description=listToString(disease))
+        embed = discord.Embed(title="**" + msg + " Coronavirus Updates as of {}".format((str(dateutil.parser.parse(d['time'])))) +"**", description=listToString(disease))
         await ctx.send(embed=embed)
 
     except:
