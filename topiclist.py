@@ -15,7 +15,7 @@ Well, I can do a trick or two. Just read them all. My prefix is `~`
 `kick`, `ban`, `mute`, `unmute`, `clear`, `say + (channel name) + your message`
 
 **Useful**
-`ping`, `av + (mention User)`, `dict + (word)`, `wiki + (word)`, `wlist + (word)`, `corona`, `weather + (city/country)`
+`ping`, `av + (mention User)`, `dict + (word)`, `wiki + (word)`, `wlist + (word)`, `corona + (country)`, `weather + (city/country)`
 
 **Useful 2**
 `news`, `urand`, `urban + (word)`, `advice`, `topic`, `quotes`, `facts`, `mshoes`, `fshoes`
