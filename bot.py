@@ -519,21 +519,25 @@ async def news(ctx):
 
 
 @client.command(name="corona", help="Returns the latest Coronavirus news in the Philippines")
-async def corona(ctx):
-    url = 'https://covid-193.p.rapidapi.com/statistics'
-    querystring = { "country": "Philippines" }
+async def corona(ctx, *, msg):
+    try:
+        url = 'https://covid-193.p.rapidapi.com/statistics'
+        querystring = { "country": msg }
 
-    headers = {
-        'x-rapidapi-host': 'covid-193.p.rapidapi.com',
-        'x-rapidapi-key': 'be7f37114bmsh38c0486c35a5050p1bc1e5jsnf574155ad041'
-    }
+        headers = {
+            'x-rapidapi-host': 'covid-193.p.rapidapi.com',
+            'x-rapidapi-key': 'be7f37114bmsh38c0486c35a5050p1bc1e5jsnf574155ad041'
+        }
 
-    response = requests.request("GET", url, headers=headers, params=querystring).json()
-    data = response['response']
-    d = data[0]
-    disease = ['\n\n**All:** ' + str(d['cases']['total']), '**Recovered:** ' + str(d['cases']['recovered']), '**Deaths:** ' + str(d['deaths']['total']), '**New:** ' + str(d['cases']['new']), '**Critical:** ' + str(d['cases']['critical']), '**Time:** ' + (str(dateutil.parser.parse(d['time'])))]
-    embed = discord.Embed(title="**Philippines Coronavirus Updates as of {}".format((str(dateutil.parser.parse(d['time'])))) +"**", description=listToString(disease))
-    await ctx.send(embed=embed)
+        response = requests.request("GET", url, headers=headers, params=querystring).json()
+        data = response['response']
+        d = data[0]
+        disease = ['\n\n**All:** ' + str(d['cases']['total']), '**Recovered:** ' + str(d['cases']['recovered']), '**Deaths:** ' + str(d['deaths']['total']), '**New:** ' + str(d['cases']['new']), '**Critical:** ' + str(d['cases']['critical']), '**Time:** ' + (str(dateutil.parser.parse(d['time'])))]
+        embed = discord.Embed(title="**Philippines Coronavirus Updates as of {}".format((str(dateutil.parser.parse(d['time'])))) +"**", description=listToString(disease))
+        await ctx.send(embed=embed)
+
+    except:
+        await ctx.send("I might have received nothing. I need a country!")
 
 
 @client.command(name="wlist", help="Returns a list of Wikipedia articles based on your query.")
