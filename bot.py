@@ -268,7 +268,7 @@ async def meme(ctx):
     url = "https://no-api-key.com/api/v1/memes"
     memes = requests.get(url).json()
     embed = discord.Embed(title="Random Meme", color=0xff00ff)
-    embed.set_image(url=memes)
+    embed.set_image(url=memes['image'])
     await ctx.send(embed=embed)
 
 @client.command()

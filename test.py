@@ -77,6 +77,10 @@ print(zalgo_text)"""
 ep = requests.get(url).json()
 print(ep['cover_images'])"""
 
-url = 'https://picsum.photos/500/500'
+"""url = 'https://picsum.photos/500/500'
 ep = requests.get(url)
-print(ep.url)
+print(ep.url)"""
+
+url = "https://no-api-key.com/api/v1/memes"
+memes = requests.get(url).json()
+print(memes['image'])
