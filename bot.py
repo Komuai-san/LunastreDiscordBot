@@ -264,6 +264,14 @@ async def bnw(ctx):
     #file_request = requests.get(attachment_url)
 
 @client.command()
+async def meme(ctx):
+    url = "https://no-api-key.com/api/v1/memes"
+    memes = requests.get(url).json()
+    embed = discord.Embed(title="Random Meme", color=0xff00ff)
+    embed.set_image(url=memes)
+    await ctx.send(embed=embed)
+
+@client.command()
 async def deepfry(ctx):
     try:
         thename = ctx.message.attachments[0].filename

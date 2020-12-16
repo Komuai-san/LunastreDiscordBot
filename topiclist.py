@@ -21,7 +21,7 @@ Well, I can do a trick or two. Just read them all. My prefix is `~`
 `news`, `urand`, `urban + (word)`, `advice`, `topic`, `quotes`, `facts`, `mshoes`, `fshoes`
 
 **Fun**
-`dogs`, `cats`, `words`, `cheemify + (word)`, `owofy + (word)`, `emojify + (word)`, `zalgofy + (word)`, `flip`, `djoke`, `ball + (your question)`, `randpic`
+`memes`, `dogs`, `cats`, `words`, `cheemify + (word)`, `owofy + (word)`, `emojify + (word)`, `zalgofy + (word)`, `flip`, `djoke`, `ball + (your question)`, `randpic`
 
 
 **Convert Youtube URL to music (.m4a)**
