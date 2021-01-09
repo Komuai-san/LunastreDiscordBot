@@ -81,6 +81,12 @@ print(ep['cover_images'])"""
 ep = requests.get(url)
 print(ep.url)"""
 
-url = "https://no-api-key.com/api/v1/memes"
+"""url = "https://no-api-key.com/api/v1/memes"
 memes = requests.get(url).json()
+print(memes['image'])"""
+
+
+img = 'https://i.pinimg.com/originals/4a/06/03/4a0603d0b59dbb9033b38bf6cbc9d853.jpg'
+url= 'https://api.no-api-key.com/api/v2/simpcard?image={}'.format(img)
+memes=requests.get(url).json()
 print(memes['image'])

@@ -292,7 +292,7 @@ async def deepfry(ctx):
 
 @client.command()
 async def topic(ctx):
-    topics = [random.choice(topiclist.randlist), random.choice(topiclist.randlist2), random.choice(topiclist.resto), random.choice(topiclist.together), random.choice(topiclist.family), random.choice(topiclist.adults), random.choice(topiclist.kids), random.choice(topiclist.deep), random.choice(topiclist.couples)]
+    topics = [random.choice(topiclist.randlist), random.choice(topiclist.randlist2), random.choice(topiclist.resto), random.choice(topiclist.together), random.choice(topiclist.family), random.choice(topiclist.adults), random.choice(topiclist.kids), random.choice(topiclist.deep)]
     await ctx.send(random.choice(topics))
 
 @client.command(name="djoke", help="This returns a dad joke.")
@@ -395,6 +395,96 @@ async def urban(ctx, *, msg):
 
     except Exception as e:
         await ctx.send(e)
+
+#NO API COMMANDS
+@client.command()
+async def simp(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/simpcard?image=' + thename
+    embed = discord.Embed(title="SIMP", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def crap(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/crap?stepped=' + thename
+    embed = discord.Embed(title="SHIT", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def smart(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/smrt?image=' + thename
+    embed = discord.Embed(title="Matalino", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def timeout(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/timeout?image=' + thename
+    embed = discord.Embed(title="TIMEOUT", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def trash(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/trash?image=' + thename
+    embed = discord.Embed(title="TRASH", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def rip(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/rip?image=' + thename
+    embed = discord.Embed(title="REST IN PEACE", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def punch(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/punch?punch=' + thename
+    embed = discord.Embed(title="PUNCHED", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def kicked(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/punch?kicked=' + thename
+    embed = discord.Embed(title="KICKED", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+
+@client.command()
+async def shoot(ctx):
+    thename = ctx.message.attachments[0].url
+    url = 'https://api.no-api-key.com/api/v2/shoot?image=' + thename
+    embed = discord.Embed(title="SIMP", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def trump(ctx, *, msg):
+    msg = msg.replace(" ", "%20")
+    url = 'https://api.no-api-key.com/api/v2/trump?message=' + msg
+    embed = discord.Embed(title="Important tweet", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+@client.command()
+async def captcha(ctx, *, msg):
+    msg = msg.replace(" ", "%20")
+    url = 'https://api.no-api-key.com/api/v2/recaptcha?text=' + msg
+    embed = discord.Embed(title="Important tweet", color=0xff00ff)
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
 
 @client.command(name="zalgofy", help="Send some text and I'll fuck it up!")
 async def zalgofy(ctx, *, text):
@@ -1112,4 +1202,5 @@ async def say(ctx, channel: discord.TextChannel, *msg):
     msg = " ".join(msg)
     await channel.send(msg)
 
-client.run(os.environ['KEY'])
+#client.run(os.environ['KEY'])
+client.run('NzYxOTU5MjExMDE3ODMwNDQw.X3iL0A.hpvKZmwyEldI2-Sa7huGb-ta1-Y')
