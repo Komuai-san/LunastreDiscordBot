@@ -1202,5 +1202,5 @@ async def say(ctx, channel: discord.TextChannel, *msg):
     msg = " ".join(msg)
     await channel.send(msg)
 
-#client.run(os.environ['KEY'])
-client.run('NzYxOTU5MjExMDE3ODMwNDQw.X3iL0A.hpvKZmwyEldI2-Sa7huGb-ta1-Y')
+client.run(os.environ['KEY'])
+#client.run('NzYxOTU5MjExMDE3ODMwNDQw.X3iL0A.hpvKZmwyEldI2-Sa7huGb-ta1-Y')
